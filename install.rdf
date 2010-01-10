@@ -6,15 +6,13 @@
     <Description about="urn:mozilla:install-manifest">
         <em:id>clipple@mooz.github.com</em:id>
         <em:type>2</em:type> <!-- type of the addon, 2 means the extension -->
-        <em:version>0.0.1</em:version>
+        <em:version>0.0.2</em:version>
         <em:name>Clipple</em:name>
         <em:creator>mooz</em:creator>
         <em:developer>mooz</em:developer>
         <em:homepageURL>http://wiki.github.com/mooz/clipple/</em:homepageURL>
         <em:optionsURL>chrome://clipple/content/preference.xul</em:optionsURL>
-	<em:iconURL>chrome://clipple/skin/icon32/clipple.png</em:iconURL>
-        <em:updateURL>http://github.com/mooz/clipple/raw/master/update.rdf</em:updateURL>
-        <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTIIo3r67JK6DJIBYyczbI/NrGurO0k5Cwn5rvXlNsRrA0LgAuCnofEdlicwxpmItBuwfdRJdZlKnaupJZPKrLoZz3t3BR4O4rBDKlY5rZM6Doqd5lBHAOXiZ35KsV4se7NKWvAZSqcpt6SLoL/YnjJ/o3Rz86i7E6BePcvutxoQIDAQAB</em:updateKey>
+        <em:iconURL>chrome://clipple/skin/icon32/clipple.png</em:iconURL>
         <!-- en-US -->
         <em:description>Provides extended clipboard which allows you to store and paste the multiple text.</em:description>
         <!-- ja -->

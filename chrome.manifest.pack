@@ -6,3 +6,5 @@ locale	clipple	en-US	jar:chrome/clipple.jar!/locale/en-US/
 locale	clipple	ja	jar:chrome/clipple.jar!/locale/ja/
 
 resource	clipple-share	share/
+
+overlay	chrome://browser/content/browser.xul	chrome://keysnail/content/browser.xul

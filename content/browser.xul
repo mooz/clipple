@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://clipple/locale/statusbar.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <!-- status bar overlay -->
+    <statusbar id="status-bar">
+
+        <statusbarpanel id="clipple-statusbar-panel" context="clipple-menu">
+            <image id="clipple-statusbar-icon"
+	           src="chrome://clipple/skin/icon16/paste.png"
+                   onmouseup=""/>
+        </statusbarpanel>
+
+        <menupopup id="clipple-menu" onpopupshowing="clippleStatusbar.onStatusBarMenuShowing(event);">
+            <menuitem id="clipple-statusbar-menu-settings"
+	              label="&clipple.statusbar.settings;"
+	              accesskey="s"
+	              oncommand="Clipple.openPreference();"
+	              class="menuitem-iconic"
+	              src="chrome://clipple/skin/icon16/settings.png"/>
+
+            <menuseparator/>
+
+	    <menu id="clipple-statusbar-menu-raise-menu"
+		  label="&clipple.statusbar.raiseMenu;"
+                  accesskey="r"
+                  class="menu-iconic"
+                  image="chrome://clipple/skin/icon16/raise.png">
+                <menupopup id="clipple-statusbar-menu-raise-popup"
+                           onpopupshowing="clippleStatusbar.onRaiseMenuShowing(event);" >
+                </menupopup>
+            </menu>
+
+	    <menu id="clipple-statusbar-menu-delete-menu"
+		  label="&clipple.statusbar.deleteMenu;"
+                  accesskey="d"
+                  class="menu-iconic"
+                  image="chrome://clipple/skin/icon16/delete.png">
+                <menupopup id="clipple-statusbar-menu-delete-popup"
+                           onpopupshowing="clippleStatusbar.onDeleteMenuShowing(event);" >
+	            <menuitem id="clipple-statusbar-menu-delete-all"
+	                      label="&clipple.statusbar.deleteAll;"
+	                      accesskey="a"
+	                      oncommand="clippleStatusbar.removeAllItem(event);" />
+                    <menuseparator />
+                </menupopup>
+            </menu>
+
+        </menupopup>
+    </statusbar>
+
+    <script type="application/x-javascript" src="chrome://clipple/content/statusbar.js"/>
+</overlay>

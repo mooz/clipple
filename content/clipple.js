@@ -17,6 +17,8 @@ let Clipple =
 
          let clip, util;
 
+         const clippleDynamicMenuID = "clipple-dynamic-menu";
+
          function init() {
              // load modules
              try
@@ -103,6 +105,7 @@ let Clipple =
                  let menuItem = document.createElement("menuitem");
                  menuItem.setAttribute("label", (i + 1) + ". " + text);
                  menuItem.setAttribute("value", text);
+                 menuItem.setAttribute("tooltiptext", text);
 
                  popup.appendChild(menuItem);
              }
@@ -191,12 +194,7 @@ let Clipple =
                                          return;
                                  }
 
-                                 if (!clip.ring.length)
-                                 {
-                                     let text = util.clipboardGet();
-                                     if (typeof text === "string" && text.length)
-                                         clip.pushText(text);
-                                 }
+                                 clip.sync();
 
                                  if (!clip.ring.length)
                                  {
@@ -234,12 +232,7 @@ let Clipple =
                  }
                  else
                  {
-                     if (!clip.ring.length)
-                     {
-                         let text = util.clipboardGet();
-                         if (typeof text === "string" && text.length)
-                             clip.pushText(text);
-                     }
+                     clip.sync();
 
                      if (!clip.ring.length)
                      {
@@ -295,15 +288,22 @@ let Clipple =
 
                  if (elem)
                  {
-                     popup.openPopup(elem, "overlap", 0, 0, true);
+                     document.documentElement.appendChild(popup);
 
                      popup.addEventListener("command", function (ev) {
                                                 let text = ev.target.getAttribute("value");
                                                 if (text)
                                                     util.insertText(text, document);
 
-                                                popup.removeEventListener(arguments.callee, false);
+                                                popup.removeEventListener("command", arguments.callee, false);
                                             }, false);
+
+                     popup.addEventListener("popuphidden", function (ev) {
+                                                popup.removeEventListener("popuphidden", arguments.callee, false);
+                                                document.documentElement.removeChild(popup);
+                                            }, false);
+
+                     popup.openPopup(elem, "after_end", 0, 0, true);
                  }
              },
 
@@ -350,9 +350,7 @@ let Clipple =
               * Open preference dialog
               */
              openPreference: function (aForce) {
-                 let openedWindow = Cc['@mozilla.org/appshell/window-mediator;1']
-                     .getService(Cc.nsIWindowMediator)
-                     .getMostRecentWindow('Clipple:Preference');
+                 let openedWindow = util.getWindow('Clipple:Preference');
 
                  if (openedWindow && !aForce)
                  {

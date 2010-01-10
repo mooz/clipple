@@ -6,6 +6,14 @@
     color        : #252525;
 }
 
+description.clipple-name:first-letter {
+    color : #7cff00 !important;
+}
+
+description:first-letter {
+    color : #7cff00 !important;
+}
+
 .clipple-text-link {
     color  : #0800ab;
     cursor : pointer !important;
@@ -29,7 +37,7 @@ radio[pane="prefpane-general"] {
 }
 
 radio[pane="prefpane-about"] {
-    list-style-image: url("chrome://clipple/skin/icon32/clipple.png");
+    list-style-image: url("chrome://clipple/skin/icon32/about.png");
 }
 
 radio[pane]:hover {

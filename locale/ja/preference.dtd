@@ -1,10 +1,11 @@
 <!ENTITY clipple.preference.title "Clipple の設定">
 
 <!ENTITY clipple.preference.general "一般">
-<!ENTITY clipple.preference.about "Clipple">
+<!ENTITY clipple.preference.about "情報">
 
 <!ENTITY clipple.preference.general.clipboard "拡張クリップボード">
 <!ENTITY clipple.preference.general.limitByTextLength "拡張クリップボードに含めるテキストを長さによって制限する">
 <!ENTITY clipple.preference.general.maxTextLength "テキストの最大長">
-<!ENTITY clipple.preference.general.ignorePassword "パスワードは無視する">
 <!ENTITY clipple.preference.general.numberOfClipboards "拡張クリップボード数">
+<!ENTITY clipple.preference.general.ignorePassword "パスワードは無視する">
+<!ENTITY clipple.preference.general.saveSession "拡張クリップボードの内容を終了時に保存し、次回起動時に復元する">
