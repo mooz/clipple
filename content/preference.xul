@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://clipple/skin/css/preference.css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://clipple/locale/preference.dtd">
+
+<prefwindow id="clipple-preference"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            xmlns:html="http://www.w3.org/1999/xhtml"
+            title="&clipple.preference.title;"
+            ondialogcancel="return clipplePreference.onFinish();"
+            ondialogaccept="return clipplePreference.onFinish();"
+            windowtype="Clipple:Preference">
+
+    <prefpane id="prefpane-general"
+              label="&clipple.preference.general;"
+              flex="1"
+              onpaneload="clipplePreference.onGeneralPaneLoad();" >
+
+        <preferences>
+            <preference id="extensions.clipple.limit_by_text_length"
+                        name="extensions.clipple.limit_by_text_length"
+                        type="bool" />
+            <preference id="extensions.clipple.text_length_max"
+                        name="extensions.clipple.text_length_max"
+                        type="int" />
+            <preference id="extensions.clipple.ignore_password"
+                        name="extensions.clipple.ignore_password"
+                        type="bool" />
+            <preference id="extensions.clipple.number_of_clipboards"
+                        name="extensions.clipple.number_of_clipboards"
+                        type="int" />
+        </preferences>
+
+        <groupbox orient="vertical">
+            <caption label="&clipple.preference.general.clipboard;" />
+            <vbox flex="1">
+                <checkbox label="&clipple.preference.general.limitByTextLength;"
+                          id="limit-by-text-length-check"
+                          oncommand="clipplePreference.onLimitByTextLengthChange();"
+                          preference="extensions.clipple.limit_by_text_length" />
+
+                <hbox id="limit-by-text-length-box" style="padding-left: 2em;" align="center">
+                    <label>&clipple.preference.general.maxTextLength;: </label>
+                    <textbox  type="number"
+                              preference="extensions.clipple.text_length_max"
+                              min="1" />
+                </hbox>
+
+                <checkbox label="&clipple.preference.general.ignorePassword;"
+                          preference="extensions.clipple.ignore_password" />
+
+                <hbox align="center">
+                    <label >&clipple.preference.general.numberOfClipboards;: </label>
+                    <textbox type="number"
+                             preference="extensions.clipple.number_of_clipboards"
+                             min="1" max="40" />
+                </hbox>
+            </vbox>
+        </groupbox>
+    </prefpane>
+
+    <!-- about panel -->
+    <prefpane id="prefpane-about" label="&clipple.preference.about;" flex="1">
+        <preferences></preferences>
+        <spacer flex="1"/>
+        <vbox align="center" flex="1" style="background-color:white;">
+            <description class="clipple-name">Clipple</description>
+            <spacer height="10px" />
+            <description>mooz &lt;stillpedant@gmail.com&gt; (c) 2009</description>
+            <description class="clipple-text-link"
+                         onclick="Clipple.modules.util.visitLink('http://wiki.github.com/mooz/clipple/')">Clipple on GitHub</description>
+            <description class="clipple-text-link"
+                         onclick="Clipple.modules.util.visitLink('http://d.hatena.ne.jp/mooz/')">Literary Masturbation (Japanese)</description>
+            <spacer height="10px"/>
+            <description class="clipple-text-link"
+                         onclick="Clipple.modules.util.visitLink('http://www.dezinerfolio.com/')">Dezinerfolio</description>
+            <hbox onclick="Clipple.modules.util.visitLink('http://www.famfamfam.com/lab/icons/silk/')"
+                  class="fam-fam-fam">
+                <description style="color:#fe0b5b">FAM</description>
+                <description style="color:#0bcdfe">FAM</description>
+                <description style="color:#aae71b">FAM</description>
+            </hbox>
+        </vbox>
+        <spacer flex="1"/>
+    </prefpane>
+
+    <script type="application/x-javascript" src="chrome://clipple/content/preference.js"/>
+</prefwindow>

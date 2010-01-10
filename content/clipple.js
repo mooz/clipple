@@ -1,0 +1,376 @@
+/**
+ * @fileOverview Clipple - Provides multiple clipboards to mozilla apps
+ * @name clipple.js
+ * @author mooz <stillpedant@gmail.com>
+ * @license The MIT License
+ */
+
+let Clipple =
+    (function () {
+         // Private {{ =============================================================== //
+
+         const Cc = Components.classes;
+         const Ci = Components.interfaces;
+
+         let _windowType = window.document.documentElement.getAttribute("windowtype");
+         let _ignoreNextCommand = false;
+
+         let clip, util;
+
+         function init() {
+             // load modules
+             try
+             {
+                 Components.utils.import("resource://clipple-share/share.js", self.modules);
+
+                 clip = self.modules.clip;
+                 util = self.modules.util;
+             }
+             catch (x)
+             {
+                 return;
+             }
+
+             // arrange information of this extension
+             let extmanager = Cc["@mozilla.org/extensions/manager;1"].createInstance(Ci.nsIExtensionManager);
+             self.extInfo = extmanager.getItemForID(self.id);
+
+             // for window which does not have goDoCommand()
+             if (typeof goDoCommand === 'undefined')
+             {
+                 window.goDoCommand = function (aCommand)
+                 {
+                     try
+                     {
+                         let controller = top.document.commandDispatcher.getControllerForCommand(aCommand);
+                         if (controller && controller.isCommandEnabled(aCommand))
+                             controller.doCommand(aCommand);
+                     }
+                     catch (e)
+                     {
+                         util.message("An error %s occurred executing the %s command", e, aCommand);
+                     }
+                 };
+             }
+
+             // Main window
+             if (!self.isThunderbird && _windowType === "navigator:browser")
+             {
+                 hookContentAreaContextMenu();
+
+                 // hook location bar copy / cut event
+                 try
+                 {
+                     let controller        = document.getElementById("urlbar")._copyCutController;
+                     let originalDoCommand = controller.doCommand;
+
+                     controller.doCommand = function (aCommand) {
+                         originalDoCommand.apply(this, arguments);
+                         self.copyCommandCalled();
+                     };
+                 }
+                 catch (x)
+                 {
+                     util.message(x);
+                 }
+             }
+
+             // finally, hook contextmenu event
+             hookGlobalContextMenu();
+
+             // hook copy event
+             hookCopyCommand();
+         }
+
+         function hookCopyCommand() {
+             window.addEventListener(
+                 "copy", function () {
+                     // we need to insert delay before calling this function
+                     setTimeout(function () { self.copyCommandCalled(); }, 0);
+                 },
+                 false
+             );
+         }
+
+         const clipplePasteMultipleClass = "clipple-paste-multiple-menu";
+
+         function createPopup() {
+             let popup = document.createElement("menupopup");
+             popup.setAttribute("class", clipplePasteMultipleClass);
+
+             for (let [i, text] in Iterator(clip.ring))
+             {
+                 let menuItem = document.createElement("menuitem");
+                 menuItem.setAttribute("label", (i + 1) + ". " + text);
+                 menuItem.setAttribute("value", text);
+
+                 popup.appendChild(menuItem);
+             }
+
+             return popup;
+         }
+
+         function updateMenu(aMenu) {
+             let popup = createPopup();
+
+             if (aMenu.firstChild)
+                 aMenu.replaceChild(popup, aMenu.firstChild);
+             else
+                 aMenu.appendChild(popup);
+         }
+
+         function createMenu(aContextMenu, aOnPopUp) {
+             const pasteIcon = "chrome://clipple/skin/icon16/paste.png";
+
+             let items = Array.slice(aContextMenu.getElementsByTagName("menuitem"), 0)
+                 .concat(Array.slice(aContextMenu.getElementsByTagName("xul:menuitem"), 0));
+
+             let itemPaste;
+
+             items.some(function (elem) {
+                            if (typeof elem.getAttribute === "function" &&
+                                (elem.getAttribute("command") === "cmd_paste" ||
+                                 elem.getAttribute("cmd")     === "cmd_paste"))
+                            {
+                                itemPaste = elem;
+                                return true;
+                            }
+
+                            return false;
+                        });
+
+             let menu = document.createElement("menu");
+             menu.setAttribute("label", util.getLocaleString("clipplePaste"));
+             menu.setAttribute("accesskey", "l");
+             menu.setAttribute("class", "menu-iconic");
+             menu.setAttribute("image", pasteIcon);
+
+             if (itemPaste)
+                 itemPaste.parentNode.insertBefore(menu, itemPaste.nextSibling);
+             else
+                 aContextMenu.appendChild(menu);
+
+             menu.addEventListener("command", function (ev) {
+                                       let text = ev.target.getAttribute("value");
+                                       if (text)
+                                           util.insertText(text, document);
+                                   }, false);
+
+             aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
+
+             return menu;
+         }
+
+         function hookGlobalContextMenu() {
+             document.addEventListener(
+                 "contextmenu",
+                 function (ev) {
+                     let target = document.commandDispatcher.focusedElement;
+
+                     function hackInputBoxContextMenu() {
+                         let inputBox = target.parentNode;
+
+                         if (inputBox.getAttribute("class") !== "textbox-input-box")
+                             return;
+
+                         let contextMenu = document.getAnonymousElementByAttribute(
+                             inputBox,
+                             "anonid", "input-box-contextmenu"
+                         );
+
+                         if (!contextMenu.__clippleHooked__)
+                         {
+                             let itemPasteMultiple;
+
+                             function onGlobalPopup(aEvent) {
+                                 if (aEvent)
+                                 {
+                                     let elem = aEvent.target;
+
+                                     if (elem.getAttribute("class") === clipplePasteMultipleClass)
+                                         return;
+                                 }
+
+                                 if (!clip.ring.length)
+                                 {
+                                     let text = util.clipboardGet();
+                                     if (typeof text === "string" && text.length)
+                                         clip.pushText(text);
+                                 }
+
+                                 if (!clip.ring.length)
+                                 {
+                                     itemPasteMultiple.setAttribute("disabled", true);
+                                 }
+                                 else
+                                 {
+                                     itemPasteMultiple.removeAttribute("disabled");
+                                     updateMenu(itemPasteMultiple);
+                                 }
+                             }
+
+                             itemPasteMultiple = createMenu(contextMenu, onGlobalPopup);
+                             contextMenu.__clippleHooked__ = true;
+
+                             onGlobalPopup();
+                         }
+                     }
+
+                     if (target)
+                         setTimeout(hackInputBoxContextMenu, 10);
+                 }, true);
+         }
+
+         function hookContentAreaContextMenu() {
+             let itemPasteMultiple;
+
+             function onContentPopup(aEvent) {
+                 if (aEvent.target.localName === "menupopup")
+                     return;
+
+                 if (!gContextMenu.onTextInput)
+                 {
+                     itemPasteMultiple.hidden = true;
+                 }
+                 else
+                 {
+                     if (!clip.ring.length)
+                     {
+                         let text = util.clipboardGet();
+                         if (typeof text === "string" && text.length)
+                             clip.pushText(text);
+                     }
+
+                     if (!clip.ring.length)
+                     {
+                         itemPasteMultiple.setAttribute("disabled", true);
+                     }
+                     else
+                     {
+                         itemPasteMultiple.removeAttribute("disabled");
+                         updateMenu(itemPasteMultiple);
+                     }
+
+                     itemPasteMultiple.hidden = false;
+                 }
+             }
+
+             let contextMenu = document.getElementById("contentAreaContextMenu");
+             itemPasteMultiple = createMenu(contextMenu, onContentPopup);
+         }
+
+         function isPassword(aElem) {
+             if (!aElem)
+                 return false;
+
+             return (aElem.localName.toLowerCase() === "input" &&
+                     "getAttribute" in aElem &&
+                     aElem.getAttribute("type") === "password");
+         }
+
+         // }} ======================================================================= //
+
+         // Public {{ ================================================================ //
+
+         let self = {
+             modules: {
+
+             },
+
+             get version() {
+                 return _extInfo.version;
+             },
+
+             get id() {
+                 return "clipple@mooz.github.com";
+             },
+
+             get isThunderbird() {
+                 return !!window.navigator.userAgent.match(/thunderbird/i);
+             },
+
+             pasteMultiple: function (ev) {
+                 let popup = createPopup();
+                 let elem  = (ev || {target : document.commandDispatcher.focusedElement}).target;
+
+                 if (elem)
+                 {
+                     popup.openPopup(elem, "overlap", 0, 0, true);
+
+                     popup.addEventListener("command", function (ev) {
+                                                let text = ev.target.getAttribute("value");
+                                                if (text)
+                                                    util.insertText(text, document);
+
+                                                popup.removeEventListener(arguments.callee, false);
+                                            }, false);
+                 }
+             },
+
+             copyCommandCalled: function (ev) {
+                 let text = util.clipboardGet() || "";
+                 let elem = document.commandDispatcher.focusedElement;
+
+                 if (!isPassword(elem))
+                 {
+                     clip.pushText(text);
+                 }
+                 else
+                 {
+                     // password
+                     if (!util.getBoolPref(util.getPrefKey("ignore_password"), true)
+                         && elem.value)
+                     {
+                         try
+                         {
+                             let [start, end] = [elem.selectionStart, elem.selectionEnd];
+
+                             elem.setAttribute("type", "text");
+                             elem.focus();
+
+                             let text = elem.value.toString().substring(start, end);
+
+                             util.clipboardSet(text);
+                             clip.pushText(text);
+                         }
+                         catch (x)
+                         {
+                             util.message(x);
+                         }
+                         finally
+                         {
+                             elem.setAttribute("type", "password");
+                             elem.focus();
+                         }
+                     }
+                 }
+             },
+
+             /**
+              * Open preference dialog
+              */
+             openPreference: function (aForce) {
+                 let openedWindow = Cc['@mozilla.org/appshell/window-mediator;1']
+                     .getService(Cc.nsIWindowMediator)
+                     .getMostRecentWindow('Clipple:Preference');
+
+                 if (openedWindow && !aForce)
+                 {
+                     openedWindow.focus();
+                 }
+                 else
+                 {
+                     window.openDialog("chrome://clipple/content/preference.xul",
+                                       "Preferences",
+                                       "chrome,titlebar,toolbar,centerscreen,resizable,scrollbars",
+                                       "prefpane-rcfile");
+                 }
+             }
+         };
+
+         // }} ======================================================================= //
+
+         init();
+
+         return self;
+     })();

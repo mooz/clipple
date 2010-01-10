@@ -1,0 +1,36 @@
+.clipple-name {
+    font-weight : bold;
+    font-size   : 220%;
+    margin      : 40px auto;
+    text-shadow : 0 0 0.5em #c1c1c1;
+    color       : #252525;
+}
+
+.clipple-text-link {
+    color  : #0800ab;
+    cursor : pointer !important;
+}
+
+.clipple-text-link:hover {
+    color : #616161;
+}
+
+.fam-fam-fam {
+    margin: 4px;
+    font-weight : bold;
+}
+
+.fam-fam-fam:hover {
+}
+
+radio[pane="prefpane-general"] {
+    list-style-image: url("chrome://clipple/skin/icon32/general.png");
+}
+
+radio[pane="prefpane-about"] {
+    list-style-image: url("chrome://clipple/skin/icon32/clipple.png");
+}
+
+radio[pane]:hover {
+    opacity : 0.7;
+}

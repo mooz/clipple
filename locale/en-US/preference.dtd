@@ -1,0 +1,10 @@
+<!ENTITY clipple.preference.title "Clipple - Settings">
+
+<!ENTITY clipple.preference.general "General">
+<!ENTITY clipple.preference.about "Clipple">
+
+<!ENTITY clipple.preference.general.clipboard "Extended clipboard">
+<!ENTITY clipple.preference.general.limitByTextLength "Limit text to push into extended clipboard by it's length.">
+<!ENTITY clipple.preference.general.maxTextLength "Max text length">
+<!ENTITY clipple.preference.general.ignorePassword "Ignore password">
+<!ENTITY clipple.preference.general.numberOfClipboards "Number of extended clipboards">
