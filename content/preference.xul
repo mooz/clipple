@@ -68,7 +68,7 @@
     <prefpane id="prefpane-about" label="&clipple.preference.about;" flex="1">
         <preferences></preferences>
         <spacer flex="1"/>
-        <vbox align="center" flex="1" style="background-color:white;">
+        <vbox align="center" flex="1" style="background-color:white;overflow:auto;">
             <description class="clipple-name">Clipple</description>
             <spacer height="10px" />
             <description>mooz &lt;stillpedant@gmail.com&gt; (c) 2009</description>
@@ -76,7 +76,6 @@
                          onclick="Clipple.modules.util.visitLink('http://wiki.github.com/mooz/clipple/')">Clipple on GitHub</description>
             <description class="clipple-text-link"
                          onclick="Clipple.modules.util.visitLink('http://d.hatena.ne.jp/mooz/')">Literary Masturbation (Japanese)</description>
-            <spacer height="10px"/>
             <description class="clipple-text-link"
                          onclick="Clipple.modules.util.visitLink('http://www.dezinerfolio.com/')">Dezinerfolio</description>
             <hbox onclick="Clipple.modules.util.visitLink('http://www.famfamfam.com/lab/icons/silk/')"

@@ -2,22 +2,22 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:extension:clipple@mooz.github.com"
-                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBANE4Y2XBsc7Sn7prisERkqFwHb0yNwDY7eq6fSN4LG7z6wWNRtftoGnJWZBfdOsbEoqqUX39vf09f3QZmY4QLho6ij1AuT1nLlJDX80WaKvY7tBwMOFvb96MhEkW8EVHC8iRC6vVBYrajP6ul0CZ+9S4cVz4HByNBQ9Phj/64DmI">
-    <em:updates RDF:resource="rdf:#$mtJrB"/>
+  <RDF:Description RDF:about="rdf:#$ntJrB"
+                   em:version="0.0.1">
+    <em:targetApplication RDF:resource="rdf:#$qtJrB"/>
   </RDF:Description>
-  <RDF:Seq RDF:about="rdf:#$mtJrB">
-    <RDF:li RDF:resource="rdf:#$ntJrB"/>
-  </RDF:Seq>
   <RDF:Description RDF:about="rdf:#$qtJrB"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="3.0"
                    em:maxVersion="3.7a1pre"
                    em:updateLink="http://github.com/mooz/clipple/raw/master/clipple.xpi"
                    em:updateInfoURL="http://github.com/mooz/clipple/raw/master/updateinfo/updateinfo2.2.xhtml"
-                   em:updateHash="sha1:101521e584739fc33b968b8a152945fa73ad80f3" />
-  <RDF:Description RDF:about="rdf:#$ntJrB"
-                   em:version="0.0.1">
-    <em:targetApplication RDF:resource="rdf:#$qtJrB"/>
+                   em:updateHash="sha1:64f06156b6db512552ab77ff11b243dc4a479220" />
+  <RDF:Description RDF:about="urn:mozilla:extension:clipple@mooz.github.com"
+                   em:signature="MIGTMA0GCSqGSIb3DQEBDQUAA4GBAGRWIujr/Ikm2t9jaSKXXKgySbDlHKUf3Ptj7PkNe3dnrASE/L6+xgb2YwmRfa2Wz+O0cwFxJ03wqqJ8zCI/CS1sUoHk+sqQMJISTeaLikZZqiRb95Yum4O3QgSPC9ly96Wftc7JtNVzD9Yswl+nYT/V9KgGSXukRVaTszKleIHC">
+    <em:updates RDF:resource="rdf:#$mtJrB"/>
   </RDF:Description>
+  <RDF:Seq RDF:about="rdf:#$mtJrB">
+    <RDF:li RDF:resource="rdf:#$ntJrB"/>
+  </RDF:Seq>
 </RDF:RDF>
