@@ -17,8 +17,6 @@ let Clipple =
 
          let clip, util;
 
-         const clippleDynamicMenuID = "clipple-dynamic-menu";
-
          function init() {
              // load modules
              try
@@ -77,12 +75,14 @@ let Clipple =
                  }
              }
 
-             // finally, hook contextmenu event
+             // hook contextmenu event
              hookGlobalContextMenu();
 
              // hook copy event
              hookCopyCommand();
          }
+
+         // }} ======================================================================= //
 
          function hookCopyCommand() {
              window.addEventListener(
@@ -94,11 +94,12 @@ let Clipple =
              );
          }
 
-         const clipplePasteMultipleClass = "clipple-paste-multiple-menu";
+         const clipplePasteMultipleMenuClass = "clipple-paste-multiple-menu";
+         const clipplePasteMultipleItemClass = "clipple-paste-multiple-item";
 
          function createPopup() {
              let popup = document.createElement("menupopup");
-             popup.setAttribute("class", clipplePasteMultipleClass);
+             popup.setAttribute("class", clipplePasteMultipleMenuClass);
 
              for (let [i, text] in Iterator(clip.ring))
              {
@@ -106,6 +107,7 @@ let Clipple =
                  menuItem.setAttribute("label", (i + 1) + ". " + text);
                  menuItem.setAttribute("value", text);
                  menuItem.setAttribute("tooltiptext", text);
+                 menuItem.setAttribute("class", clipplePasteMultipleItemClass);
 
                  popup.appendChild(menuItem);
              }
@@ -122,7 +124,7 @@ let Clipple =
                  aMenu.appendChild(popup);
          }
 
-         function createMenu(aContextMenu, aOnPopUp) {
+         function implantClipple(aContextMenu, aOnPopUp) {
              const pasteIcon = "chrome://clipple/skin/icon16/paste.png";
 
              let items = Array.slice(aContextMenu.getElementsByTagName("menuitem"), 0)
@@ -173,7 +175,7 @@ let Clipple =
                      function hackInputBoxContextMenu() {
                          let inputBox = target.parentNode;
 
-                         if (inputBox.getAttribute("class") !== "textbox-input-box")
+                         if (inputBox.getAttribute("class").indexOf("textbox-input-box") === -1)
                              return;
 
                          let contextMenu = document.getAnonymousElementByAttribute(
@@ -190,7 +192,7 @@ let Clipple =
                                  {
                                      let elem = aEvent.target;
 
-                                     if (elem.getAttribute("class") === clipplePasteMultipleClass)
+                                     if (elem.getAttribute("class").indexOf(clipplePasteMultipleMenuClass) >= 0)
                                          return;
                                  }
 
@@ -207,7 +209,7 @@ let Clipple =
                                  }
                              }
 
-                             itemPasteMultiple = createMenu(contextMenu, onGlobalPopup);
+                             itemPasteMultiple = implantClipple(contextMenu, onGlobalPopup);
                              contextMenu.__clippleHooked__ = true;
 
                              onGlobalPopup();
@@ -249,7 +251,7 @@ let Clipple =
              }
 
              let contextMenu = document.getElementById("contentAreaContextMenu");
-             itemPasteMultiple = createMenu(contextMenu, onContentPopup);
+             itemPasteMultiple = implantClipple(contextMenu, onContentPopup);
          }
 
          function isPassword(aElem) {
@@ -360,8 +362,7 @@ let Clipple =
                  {
                      window.openDialog("chrome://clipple/content/preference.xul",
                                        "Preferences",
-                                       "chrome,titlebar,toolbar,centerscreen,resizable,scrollbars",
-                                       "prefpane-rcfile");
+                                       "chrome,titlebar,toolbar,centerscreen,resizable,scrollbars");
                  }
              }
          };

@@ -10,8 +10,9 @@
 
         <statusbarpanel id="clipple-statusbar-panel" context="clipple-menu">
             <image id="clipple-statusbar-icon"
+                   tooltiptext="Clipple!"
 	           src="chrome://clipple/skin/icon16/paste.png"
-                   onmouseup=""/>
+                   onclick="clippleStatusbar.openStatusBarMenu(event);" />
         </statusbarpanel>
 
         <menupopup id="clipple-menu" onpopupshowing="clippleStatusbar.onStatusBarMenuShowing(event);">

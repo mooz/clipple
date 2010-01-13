@@ -128,6 +128,10 @@ let clippleStatusbar =
                  }
              },
 
+             openStatusBarMenu: function (ev) {
+                 $("clipple-menu").openPopup(ev.target, "after_start", 0, 0, true);
+             },
+
              onStatusBarMenuShowing: function (ev) {
                  clip.sync();
 
