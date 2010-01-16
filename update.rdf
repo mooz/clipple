@@ -16,7 +16,7 @@
                    em:maxVersion="3.7a1pre"
                    em:updateLink="http://github.com/mooz/clipple/raw/master/clipple.xpi"
                    em:updateInfoURL="http://github.com/mooz/clipple/raw/master/updateinfo/updateinfo2.2.xhtml"
-                   em:updateHash="sha1:7165df3a0cb5a88b7a19a057d4a0c2e655e45667" />
+                   em:updateHash="sha1:88c4dbb7a27bd10c3d5581900f3533a1067ce6b9" />
   <RDF:Seq RDF:about="rdf:#$mtJrB">
     <RDF:li RDF:resource="rdf:#$ntJrB"/>
   </RDF:Seq>

@@ -175,7 +175,7 @@ let Clipple =
                      function hackInputBoxContextMenu() {
                          let inputBox = target.parentNode;
 
-                         if (inputBox.getAttribute("class").indexOf("textbox-input-box") === -1)
+                         if ((inputBox.getAttribute("class") || "").indexOf("textbox-input-box") === -1)
                              return;
 
                          let contextMenu = document.getAnonymousElementByAttribute(
@@ -192,7 +192,7 @@ let Clipple =
                                  {
                                      let elem = aEvent.target;
 
-                                     if (elem.getAttribute("class").indexOf(clipplePasteMultipleMenuClass) >= 0)
+                                     if ((elem.getAttribute("class") || "").indexOf(clipplePasteMultipleMenuClass) >= 0)
                                          return;
                                  }
 
@@ -344,6 +344,10 @@ let Clipple =
                              elem.setAttribute("type", "password");
                              elem.focus();
                          }
+                     }
+                     else
+                     {
+                         util.clipboardSet(clip.ring[0] || "");
                      }
                  }
              },
