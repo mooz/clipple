@@ -166,6 +166,17 @@ let Clipple =
              return menu;
          }
 
+         function climbNodes(aNode, aMaxStairs, aProsess) {
+             for (let i = 0; i < aMaxStairs; ++i)
+             {
+                 aNode = aNode.parentNode;
+                 if (aProsess(aNode))
+                     return aNode;
+             }
+
+             return null;
+         }
+
          function hookGlobalContextMenu() {
              document.addEventListener(
                  "contextmenu",
@@ -173,17 +184,15 @@ let Clipple =
                      let target = document.commandDispatcher.focusedElement;
 
                      function hackInputBoxContextMenu() {
-                         let inputBox = target.parentNode;
-
-                         if ((inputBox.getAttribute("class") || "").indexOf("textbox-input-box") === -1)
-                             return;
+                         let inputBox = climbNodes(target, 4, function (node)
+                                                   ((node.getAttribute("class") || "").indexOf("textbox-input-box") >= 0));
 
                          let contextMenu = document.getAnonymousElementByAttribute(
                              inputBox,
                              "anonid", "input-box-contextmenu"
                          );
 
-                         if (!contextMenu.__clippleHooked__)
+                         if (contextMenu && !contextMenu.__clippleHooked__)
                          {
                              let itemPasteMultiple;
 
