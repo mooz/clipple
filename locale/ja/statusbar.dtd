@@ -1,7 +1,8 @@
+<!ENTITY clipple.statusbar.title "Clipple!">
+
 <!ENTITY clipple.statusbar.settings "設定">
 
 <!ENTITY clipple.statusbar.raiseMenu "アイテムを最前面へ">
 
 <!ENTITY clipple.statusbar.deleteMenu "アイテムを削除">
 <!ENTITY clipple.statusbar.deleteAll "全て削除">
-
