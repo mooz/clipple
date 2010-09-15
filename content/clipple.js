@@ -16,6 +16,22 @@ let Clipple = (function () {
 
     let clip, util;
 
+    const $D = {
+        elem: function (name, attrs, props) {
+            let elem = document.createElement(name);
+
+            if (attrs)
+                for (let [k, v] in Iterator(attrs))
+                    elem.setAttribute(k, v);
+
+            if (props)
+                for (let [k, v] in Iterator(props))
+                    elem[k] = v;
+
+            return elem;
+        }
+    };
+
     function init() {
         // load modules
         try
