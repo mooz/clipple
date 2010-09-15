@@ -163,8 +163,7 @@ let Clipple = (function () {
     }
 
     function climbNodes(aNode, aMaxStairs, aProsess) {
-        for (let i = 0; i < aMaxStairs; ++i)
-        {
+        for (let i = 0; i < aMaxStairs; ++i) if (aNode) {
             aNode = aNode.parentNode;
             if (aProsess(aNode))
                 return aNode;
