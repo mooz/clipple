@@ -37,6 +37,9 @@
             <preference id="extensions.clipple.save_session"
                         name="extensions.clipple.save_session"
                         type="bool" />
+            <preference id="extensions.clipple.use_paste_all"
+                        name="extensions.clipple.use_paste_all"
+                        type="bool" />
         </preferences>
 
         <groupbox orient="vertical">
@@ -60,6 +63,9 @@
                               preference="extensions.clipple.text_length_max"
                               min="1" />
                 </hbox>
+                <!-- ############################################################ -->
+                <checkbox label="&clipple.preference.general.usePasteAll;"
+                          preference="extensions.clipple.use_paste_all" />
                 <!-- ############################################################ -->
                 <checkbox label="&clipple.preference.general.ignorePassword;"
                           preference="extensions.clipple.ignore_password" />

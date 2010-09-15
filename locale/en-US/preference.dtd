@@ -7,5 +7,6 @@
 <!ENTITY clipple.preference.general.limitByTextLength "Limit text to store by it's length">
 <!ENTITY clipple.preference.general.maxTextLength "Max text length">
 <!ENTITY clipple.preference.general.numberOfClipboards "Number of extended clipboards">
+<!ENTITY clipple.preference.general.usePasteAll "Enable 'Paste all items'">
 <!ENTITY clipple.preference.general.ignorePassword "Ignore password">
 <!ENTITY clipple.preference.general.saveSession "Save session">

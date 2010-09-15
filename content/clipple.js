@@ -110,16 +110,26 @@ let Clipple = (function () {
     const clipplePasteMultipleItemClass = "clipple-paste-multiple-item";
 
     function createPopup() {
-        let popup = document.createElement("menupopup");
-        popup.setAttribute("class", clipplePasteMultipleMenuClass);
+        let popup = $D.elem("menupopup", {
+            "class" : clipplePasteMultipleMenuClass
+        });
+
+        if (util.getBoolPref(util.getPrefKey("use_paste_all"), false)) {
+            popup.appendChild($D.elem("menuitem", {
+                label       : "0. " + util.getLocaleString("pasteAll"),
+                "class"     : clipplePasteMultipleItemClass
+            }));
+            popup.appendChild($D.elem("menuseparator"));
+        }
 
         for (let [i, text] in Iterator(clip.ring))
         {
-            let menuItem = document.createElement("menuitem");
-            menuItem.setAttribute("label", (i + 1) + ". " + text);
-            menuItem.setAttribute("value", text);
-            menuItem.setAttribute("tooltiptext", text);
-            menuItem.setAttribute("class", clipplePasteMultipleItemClass);
+            let menuItem = $D.elem("menuitem", {
+                label       : (i + 1) + ". " + text,
+                value       : text,
+                tooltiptext : text,
+                "class"     : clipplePasteMultipleItemClass
+            });
 
             popup.appendChild(menuItem);
         }
@@ -167,11 +177,7 @@ let Clipple = (function () {
         else
             aContextMenu.appendChild(menu);
 
-        menu.addEventListener("command", function (ev) {
-            let text = ev.target.getAttribute("value");
-            if (text)
-                util.insertText(text, document);
-        }, false);
+        menu.addEventListener("command", handlePasteMenuCommand, false);
 
         aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
 
@@ -283,6 +289,21 @@ let Clipple = (function () {
                 aElem.getAttribute("type") === "password");
     }
 
+    function handlePasteMenuCommand(ev) {
+        let item  = ev.target;
+        let label = item.getAttribute("label");
+        let text  = item.getAttribute("value");
+
+        if (label && label.indexOf("0.") >= 0)
+            pasteAllItems();
+        else if (text)
+            util.insertText(text, document);
+    }
+
+    function pasteAllItems() {
+        util.insertText(clip.ring.join("\n"), document);
+    }
+
     // }} ======================================================================= //
 
     // Public {{ ================================================================ //
@@ -304,6 +325,8 @@ let Clipple = (function () {
             return !!window.navigator.userAgent.match(/thunderbird/i);
         },
 
+        pasteAllItems: pasteAllItems,
+
         pasteMultiple: function (ev) {
             let popup = createPopup();
             let elem  = (ev || {target : document.commandDispatcher.focusedElement}).target;
@@ -313,10 +336,7 @@ let Clipple = (function () {
                 document.documentElement.appendChild(popup);
 
                 popup.addEventListener("command", function (ev) {
-                    let text = ev.target.getAttribute("value");
-                    if (text)
-                        util.insertText(text, document);
-
+                    handlePasteMenuCommand(ev);
                     popup.removeEventListener("command", arguments.callee, false);
                 }, false);
 

@@ -7,5 +7,6 @@
 <!ENTITY clipple.preference.general.limitByTextLength "不收錄超長副本(留置系統剪貼簿)">
 <!ENTITY clipple.preference.general.maxTextLength "字數上限">
 <!ENTITY clipple.preference.general.numberOfClipboards "筆數上限">
+<!ENTITY clipple.preference.general.usePasteAll "Enable 'Paste all items'">
 <!ENTITY clipple.preference.general.ignorePassword "不收錄密碼">
 <!ENTITY clipple.preference.general.saveSession "自動存檔，供其他瀏覽行程使用">
