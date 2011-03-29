@@ -13,7 +13,8 @@ const CID = Components.ID('{2949016c-3e8c-4726-988c-6bd2c90f3e8e}');
 const CONTRACT_ID = '@github.com/mooz/clipple/loader;1';
 const CLASS_NAME = 'clipple Loader';
 
-const STARTUP_TOPIC = 'app-startup';
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+const STARTUP_TOPIC = XPCOMUtils.generateNSGetFactory ? 'profile-after-change' : 'app-startup';
 
 function message(aMsg) {
     let logs = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
@@ -88,7 +89,11 @@ ClippleLoader.prototype = {
             throw Components.results.NS_ERROR_NO_INTERFACE;
         }
         return this;
-    }
+    },
+
+    classDescription: CLASS_NAME,
+    contractID: CONTRACT_ID,
+    classID: CID
 };
 
 var module = {
@@ -138,6 +143,7 @@ var module = {
     }
 };
 
-function NSGetModule(aCompMgr, aFileSpec) {
-    return module;
-}
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory([ClippleLoader]);
+else
+    var NSGetModule = function (aCompMgr, aFileSpec) { return module; };

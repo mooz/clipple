@@ -46,10 +46,6 @@ let Clipple = (function () {
             return;
         }
 
-        // arrange information of this extension
-        let extmanager = Cc["@mozilla.org/extensions/manager;1"].createInstance(Ci.nsIExtensionManager);
-        self.extInfo = extmanager.getItemForID(self.id);
-
         // for window which does not have goDoCommand()
         if (typeof goDoCommand === 'undefined')
         {
@@ -178,6 +174,10 @@ let Clipple = (function () {
             aContextMenu.appendChild(menu);
 
         menu.addEventListener("command", handlePasteMenuCommand, false);
+        // menu.addEventListener("click", function (ev) {
+        //     if (ev.target !== menu)
+        //         handlePasteMenuCommand(ev);
+        // }, false);
 
         aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
 
@@ -298,6 +298,14 @@ let Clipple = (function () {
             pasteAllItems();
         else if (text)
             util.insertText(text, document);
+
+        if (ev.button !== 0) {
+            util.message("Button :: " + ev.button);
+
+            ["keydown", "keypress", "keyup"].forEach(function (type) {
+                util.emulateKey(type, KeyEvent.DOM_VK_ENTER, document);
+            });
+        }
     }
 
     function pasteAllItems() {
@@ -311,10 +319,6 @@ let Clipple = (function () {
     let self = {
         modules: {
 
-        },
-
-        get version() {
-            return _extInfo.version;
         },
 
         get id() {

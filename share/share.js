@@ -1,7 +1,8 @@
 let EXPORTED_SYMBOLS = ["clip", "util", "persist"];
 
-const Cc = Components.classes;
-const Ci = Components.interfaces;
+const { interfaces : Ci,
+        classes    : Cc,
+        utils      : Cu } = Components.classes;
 
 const prefRoot = "extensions.clipple";
 const extensionName = "clipple";
@@ -415,6 +416,34 @@ let util = {
         }
     },
 
+    getCallerGlobal: function getCallerGlobal() {
+        try {
+            let target = getCallerGlobal.caller.caller;
+            return ("getGlobalForObject" in Cu) ? Cu.getGlobalForObject(target) : target.__parent__;
+        } catch ([]) {
+            return null;
+        }
+    },
+
+    focusedElement: function util_focusedElement(doc) {
+        doc = doc || util.getCallerGlobal().document;
+
+        return doc.commandDispatcher.focusedElement
+            || doc.commandDispatcher.focusedWindow.document.activeElement;
+    },
+
+    emulateKey: function util_emulateKey(type, key, doc) {
+        doc = doc || util.getCallerGlobal().document;
+
+        let ev = doc.createEvent('KeyboardEvent');
+        ev.initKeyEvent(type,
+                        true, true, null,
+                        false, false, false, false,
+                        key, 0);
+
+        util.focusedElement(doc).dispatchEvent(ev);
+    },
+
     format: function util_format(aFormat) {
         for (let i = 1; i < arguments.length; ++i)
             aFormat = aFormat.replace("%s", arguments[i]);
@@ -520,10 +549,10 @@ function hookApplicationQuit() {
 
 function init() {
     hookApplicationQuit();
-    
+
     if (util.getBoolPref(util.getPrefKey("save_session"), true))
     {
-        clip.ring = persist.restore("clipboard") || [];        
+        clip.ring = persist.restore("clipboard") || [];
     }
 
     clip.sync();

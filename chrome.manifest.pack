@@ -8,3 +8,7 @@ locale	clipple	ja	jar:chrome/clipple.jar!/locale/ja/
 resource	clipple-share	share/
 
 overlay	chrome://browser/content/browser.xul	chrome://clipple/content/browser.xul
+
+component	{2949016c-3e8c-4726-988c-6bd2c90f3e8e}	components/clipple-loader.js
+contract	@github.com/mooz/clipple/loader;1	{2949016c-3e8c-4726-988c-6bd2c90f3e8e}
+category	profile-after-change	@github.com/mooz/clipple/loader;1	@github.com/mooz/clipple/loader;1
