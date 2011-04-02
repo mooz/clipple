@@ -425,23 +425,28 @@ let util = {
         }
     },
 
-    focusedElement: function util_focusedElement(doc) {
+    getFocusedElement: function util_getFocusedElement(doc) {
         doc = doc || util.getCallerGlobal().document;
 
         return doc.commandDispatcher.focusedElement
-            || doc.commandDispatcher.focusedWindow.document.activeElement;
+            || doc.commandDispatcher.focusedWindow.document.activeElement
+            || doc.documentElement;
     },
 
-    emulateKey: function util_emulateKey(type, key, doc) {
-        doc = doc || util.getCallerGlobal().document;
+    emulateKey: function util_emulateKey(ctx) {
+        let doc = ctx.document || util.getCallerGlobal().document;
 
         let ev = doc.createEvent('KeyboardEvent');
-        ev.initKeyEvent(type,
+        ev.initKeyEvent(ctx.type,
                         true, true, null,
-                        false, false, false, false,
-                        key, 0);
+                        !!ctx.ctrlKey,
+                        !!ctx.altKey,
+                        !!ctx.shiftKey,
+                        !!ctx.metaKey,
+                        ctx.keyCode,
+                        ctx.charCode);
 
-        util.focusedElement(doc).dispatchEvent(ev);
+        (ctx.target || util.focusedElement(doc)).dispatchEvent(ev);
     },
 
     format: function util_format(aFormat) {

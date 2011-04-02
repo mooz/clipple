@@ -123,8 +123,8 @@ let Clipple = (function () {
     function updateMenu(aMenu) {
         let popup = createPopup();
 
-        if (aMenu.firstChild)
-            aMenu.replaceChild(popup, aMenu.firstChild);
+        if (aMenu.firstElementChild)
+            aMenu.replaceChild(popup, aMenu.firstElementChild);
         else
             aMenu.appendChild(popup);
     }
@@ -159,11 +159,11 @@ let Clipple = (function () {
         else
             aContextMenu.appendChild(menu);
 
-        menu.addEventListener("command", handlePasteMenuCommand, false);
-        // menu.addEventListener("click", function (ev) {
-        //     if (ev.target !== menu)
-        //         handlePasteMenuCommand(ev);
-        // }, false);
+        // menu.addEventListener("command", handlePasteMenuCommand, false);
+        menu.addEventListener("click", function (ev) {
+            if (ev.target !== menu)
+                handlePasteMenuCommand(ev);
+        }, false);
 
         aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
 
@@ -178,6 +178,17 @@ let Clipple = (function () {
         }
 
         return null;
+    }
+
+    function updateIcon(item) {
+        clip.sync();
+
+        if (!clip.ring.length) {
+            item.setAttribute("disabled", true);
+        } else {
+            item.removeAttribute("disabled");
+            updateMenu(item);
+        }
     }
 
     function hookGlobalContextMenu() {
@@ -206,17 +217,10 @@ let Clipple = (function () {
                                 return;
                         }
 
-                        clip.sync();
-
-                        if (!clip.ring.length) {
-                            itemPasteMultiple.setAttribute("disabled", true);
-                        } else {
-                            itemPasteMultiple.removeAttribute("disabled");
-                            updateMenu(itemPasteMultiple);
-                        }
+                        updateIcon(itemPasteMultiple);
                     }
 
-                    itemPasteMultiple = implantClipple(contextMenu, onGlobalPopup);
+                    itemPasteMultiple = implantClipple(contextMenu, onGlobalPopup, inputBox);
                     contextMenu.__clippleHooked__ = true;
 
                     onGlobalPopup();
@@ -229,29 +233,23 @@ let Clipple = (function () {
     }
 
     function hookContentAreaContextMenu() {
-        let itemPasteMultiple;
+        var itemPasteMultiple, contextMenu;
+
+        const ID = "contentAreaContextMenu";
 
         function onContentPopup(aEvent) {
-            if (aEvent.target.localName === "menupopup")
+            if (aEvent.target !== contextMenu)
                 return;
 
             if (!gContextMenu.onTextInput) {
                 itemPasteMultiple.hidden = true;
             } else {
-                clip.sync();
-
-                if (!clip.ring.length) {
-                    itemPasteMultiple.setAttribute("disabled", true);
-                } else {
-                    itemPasteMultiple.removeAttribute("disabled");
-                    updateMenu(itemPasteMultiple);
-                }
-
+                updateIcon(itemPasteMultiple);
                 itemPasteMultiple.hidden = false;
             }
         }
 
-        let contextMenu = document.getElementById("contentAreaContextMenu");
+        contextMenu = document.getElementById(ID);
         itemPasteMultiple = implantClipple(contextMenu, onContentPopup);
     }
 
@@ -274,13 +272,25 @@ let Clipple = (function () {
         else if (text)
             util.insertText(text, document);
 
-        // if (ev.button !== 0) {
-        //     util.message("Button :: " + ev.button);
+        if (ev.button !== 0) {
+            // When user right-click on the menuitem, emulate ENTER event
+            // which achieves generic `paste-and-go`.
 
-        //     ["keydown", "keypress", "keyup"].forEach(function (type) {
-        //         util.emulateKey(type, KeyEvent.DOM_VK_ENTER, document);
-        //     });
-        // }
+            let target = util.getFocusedElement(document);
+            target.focus();
+
+            ["keydown", "keypress", "keyup"].forEach(function (type) {
+                [KeyEvent.DOM_VK_ENTER, KeyEvent.DOM_VK_RETURN].forEach(function (keyCode) {
+                    util.emulateKey({
+                        type     : type,
+                        keyCode  : keyCode,
+                        charCode : 0,
+                        document : document,
+                        target   : target
+                    });
+                });
+            });
+        }
     }
 
     function pasteAllItems() {
