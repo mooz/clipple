@@ -2,7 +2,7 @@ let EXPORTED_SYMBOLS = ["clip", "util", "persist"];
 
 const { interfaces : Ci,
         classes    : Cc,
-        utils      : Cu } = Components.classes;
+        utils      : Cu } = Components;
 
 const prefRoot = "extensions.clipple";
 const extensionName = "clipple";
