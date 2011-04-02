@@ -93,6 +93,12 @@ let Clipple = (function () {
     const clipplePasteMultipleMenuClass = "clipple-paste-multiple-menu";
     const clipplePasteMultipleItemClass = "clipple-paste-multiple-item";
 
+    function createTooltipText(text) {
+        return util.getLocaleString("pasteDescription")
+            + "\n--------------------------------------------------------------------------------\n"
+            + text;
+    }
+
     function createPopup() {
         let popup = $D.elem("menupopup", {
             "class" : clipplePasteMultipleMenuClass
@@ -110,7 +116,7 @@ let Clipple = (function () {
             let menuItem = $D.elem("menuitem", {
                 label       : (i + 1) + ". " + text,
                 value       : text,
-                tooltiptext : text,
+                tooltiptext : createTooltipText(text),
                 "class"     : clipplePasteMultipleItemClass
             });
 
