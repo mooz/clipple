@@ -170,30 +170,43 @@ let Clipple = (function () {
         else
             aContextMenu.appendChild(menu);
 
-        menu.addEventListener("command", function (ev) {
-            let { target } = ev;
+        let doneList = [];
 
-            if (target !== menu)
-                doActionForMenuItem(target);
-        }, false);
-        menu.addEventListener("click", function (ev) {
-            let { target } = ev;
+        // To prevent paste duplication (click -> command),
+        // watch flags named `alreadyClicked`
+        let (alreadyClicked = false) {
+            menu.addEventListener("command", function (ev) {
+                let { target } = ev;
 
-            if (target === menu)
-                handleMenuClick(ev);
-            else {
-                doActionForMenuItem(target);
-                if (ev.button !== 0) {
-                    // When user right-click on the menuitem, emulate ENTER event
-                    // which achieves generic `paste-and-go`.
-                    emulateEnterKey(util.getFocusedElement());
+                if (target !== menu && !alreadyClicked)
+                    doActionForMenuItem(target);
+
+                ev.stopPropagation();
+            }, false);
+
+            menu.addEventListener("click", function (ev) {
+                let { target } = ev;
+
+                if (target === menu)
+                    handleMenuClick(ev);
+                else {
+                    util.message("click called");
+                    doActionForMenuItem(target);
+                    if (ev.button !== 0) {
+                        // When user right-click on the menuitem, emulate ENTER event
+                        // which achieves generic `paste-and-go`.
+                        emulateEnterKey(util.getFocusedElement());
+                    }
                 }
-            }
 
-            ev.stopPropagation();
-        }, false);
+                alreadyClicked = true;
+            }, false);
 
-        aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
+            aContextMenu.addEventListener("popupshowing", function (ev) {
+                alreadyClicked = false;
+                aOnPopUp(ev);
+            }, false);
+        };
 
         return menu;
     }
