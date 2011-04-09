@@ -271,6 +271,25 @@ let Clipple = (function () {
                 aElem.getAttribute("type") === "password");
     }
 
+    function emulateEnterKey(target) {
+        if (!target)
+            return;
+
+        target.focus();
+
+        ["keydown", "keypress", "keyup"].forEach(function (type) {
+            [KeyEvent.DOM_VK_ENTER, KeyEvent.DOM_VK_RETURN].forEach(function (keyCode) {
+                util.emulateKey({
+                    type     : type,
+                    keyCode  : keyCode,
+                    charCode : 0,
+                    document : document,
+                    target   : target
+                });
+            });
+        });
+    }
+
     function handlePasteMenuCommand(ev) {
         let item  = ev.target;
         let label = item.getAttribute("label");
@@ -284,21 +303,7 @@ let Clipple = (function () {
         if (ev.type === "click" && ev.button !== 0) {
             // When user right-click on the menuitem, emulate ENTER event
             // which achieves generic `paste-and-go`.
-
-            let target = util.getFocusedElement(document);
-            target.focus();
-
-            ["keydown", "keypress", "keyup"].forEach(function (type) {
-                [KeyEvent.DOM_VK_ENTER, KeyEvent.DOM_VK_RETURN].forEach(function (keyCode) {
-                    util.emulateKey({
-                        type     : type,
-                        keyCode  : keyCode,
-                        charCode : 0,
-                        document : document,
-                        target   : target
-                    });
-                });
-            });
+            emulateEnterKey(util.getFocusedElement(document));
         }
 
         ev.stopPropagation();
