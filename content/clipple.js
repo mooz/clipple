@@ -165,7 +165,10 @@ let Clipple = (function () {
         else
             aContextMenu.appendChild(menu);
 
-        // menu.addEventListener("command", handlePasteMenuCommand, false);
+        menu.addEventListener("command", function (ev) {
+            if (ev.target !== menu)
+                handlePasteMenuCommand(ev);
+        }, false);
         menu.addEventListener("click", function (ev) {
             if (ev.target !== menu)
                 handlePasteMenuCommand(ev);
@@ -278,7 +281,7 @@ let Clipple = (function () {
         else if (text)
             util.insertText(text, document);
 
-        if (ev.button !== 0) {
+        if (ev.type === "click" && ev.button !== 0) {
             // When user right-click on the menuitem, emulate ENTER event
             // which achieves generic `paste-and-go`.
 
@@ -297,6 +300,8 @@ let Clipple = (function () {
                 });
             });
         }
+
+        ev.stopPropagation();
     }
 
     function pasteAllItems() {
