@@ -135,24 +135,8 @@ let Clipple = (function () {
             aMenu.appendChild(popup);
     }
 
-    function implantClipple(aContextMenu, aOnPopUp) {
+    function createClippleMenu() {
         const pasteIcon = "chrome://clipple/skin/icon16/paste.png";
-
-        let items = Array.slice(aContextMenu.getElementsByTagName("menuitem"), 0)
-            .concat(Array.slice(aContextMenu.getElementsByTagName("xul:menuitem"), 0));
-
-        let itemPaste;
-
-        items.some(function (elem) {
-            if (typeof elem.getAttribute === "function" &&
-                (elem.getAttribute("command") === "cmd_paste" ||
-                 elem.getAttribute("cmd")     === "cmd_paste")) {
-                itemPaste = elem;
-                return true;
-            }
-
-            return false;
-        });
 
         let menu = document.createElement("menu");
         menu.setAttribute("label", util.getLocaleString("clipplePaste"));
@@ -160,18 +144,53 @@ let Clipple = (function () {
         menu.setAttribute("class", "menu-iconic");
         menu.setAttribute("image", pasteIcon);
 
-        if (itemPaste)
-            itemPaste.parentNode.insertBefore(menu, itemPaste.nextSibling);
+        return menu;
+    }
+
+    function findPasteItem(menuitems) {
+        for (let [, item] in Iterator(menuitems)) {
+            if (typeof item.getAttribute === "function"
+                && (item.getAttribute("command") === "cmd_paste"
+                    || item.getAttribute("cmd")     === "cmd_paste"))
+                return item;
+        }
+
+        return null;
+    }
+
+    function implantClipple(aContextMenu, aOnPopUp) {
+        let items = Array.slice(aContextMenu.getElementsByTagName("menuitem"), 0)
+            .concat(Array.slice(aContextMenu.getElementsByTagName("xul:menuitem"), 0));
+        let pasteItem = findPasteItem(items);
+
+        let menu = createClippleMenu();
+
+        if (pasteItem)
+            pasteItem.parentNode.insertBefore(menu, pasteItem.nextSibling);
         else
             aContextMenu.appendChild(menu);
 
         menu.addEventListener("command", function (ev) {
-            if (ev.target !== menu)
-                handlePasteMenuCommand(ev);
+            let { target } = ev;
+
+            if (target !== menu)
+                doActionForMenuItem(target);
         }, false);
         menu.addEventListener("click", function (ev) {
-            if (ev.target !== menu)
-                handlePasteMenuCommand(ev);
+            let { target } = ev;
+
+            if (target === menu)
+                handleMenuClick(ev);
+            else {
+                doActionForMenuItem(target);
+                if (ev.button !== 0) {
+                    // When user right-click on the menuitem, emulate ENTER event
+                    // which achieves generic `paste-and-go`.
+                    emulateEnterKey(util.getFocusedElement());
+                }
+            }
+
+            ev.stopPropagation();
         }, false);
 
         aContextMenu.addEventListener("popupshowing", aOnPopUp, false);
@@ -273,7 +292,7 @@ let Clipple = (function () {
 
     function emulateEnterKey(target) {
         if (!target)
-            return;
+            target = util.getFocusedElement(document);
 
         target.focus();
 
@@ -290,8 +309,7 @@ let Clipple = (function () {
         });
     }
 
-    function handlePasteMenuCommand(ev) {
-        let item  = ev.target;
+    function doActionForMenuItem(item) {
         let label = item.getAttribute("label");
         let text  = item.getAttribute("value");
 
@@ -299,14 +317,26 @@ let Clipple = (function () {
             pasteAllItems();
         else if (text)
             util.insertText(text, document);
+    }
 
-        if (ev.type === "click" && ev.button !== 0) {
-            // When user right-click on the menuitem, emulate ENTER event
-            // which achieves generic `paste-and-go`.
-            emulateEnterKey(util.getFocusedElement(document));
+    function handleMenuClick(ev) {
+        if (ev.button !== 0) {
+            try {
+                ev.target.parentNode.hidePopup();
+            } catch ([]) {}
+            pasteFirstItem();
+            emulateEnterKey();
+            ev.stopPropagation();
         }
+    }
 
-        ev.stopPropagation();
+    function pasteNthItem(n) {
+        if (clip.ring.length)
+            util.insertText(clip.ring[0], document);
+    }
+
+    function pasteFirstItem() {
+        pasteNthItem(0);
     }
 
     function pasteAllItems() {
