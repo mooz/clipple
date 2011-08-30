@@ -326,7 +326,7 @@ let Clipple = (function () {
         let label = item.getAttribute("label");
         let text  = item.getAttribute("value");
 
-        if (label && label.indexOf("0.") >= 0)
+        if (label && label.indexOf("0.") === 0)
             pasteAllItems();
         else if (text)
             util.insertText(text, document);
