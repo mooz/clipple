@@ -190,7 +190,6 @@ let Clipple = (function () {
                 if (target === menu)
                     handleMenuClick(ev);
                 else {
-                    util.message("click called");
                     doActionForMenuItem(target);
                     if (ev.button !== 0) {
                         // When user right-click on the menuitem, emulate ENTER event
