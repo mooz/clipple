@@ -2,20 +2,21 @@
 
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 
+<?xml-stylesheet href="chrome://clipple/skin/css/toolbar-button.css" type="text/css"?>
+
 <!DOCTYPE dialog SYSTEM "chrome://clipple/locale/statusbar.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <!-- status bar overlay -->
-    <statusbar id="status-bar">
+    <toolbarpalette id="BrowserToolbarPalette">
 
-        <statusbarpanel id="clipple-statusbar-panel" context="clipple-menu">
-            <image id="clipple-statusbar-icon"
-                   tooltiptext="Clipple!"
-	           src="chrome://clipple/skin/icon16/paste.png"
-                   onclick="clippleStatusbar.openStatusBarMenu(event);" />
-        </statusbarpanel>
-
-        <menupopup id="clipple-menu" onpopupshowing="clippleStatusbar.onStatusBarMenuShowing(event);">
+        <toolbarbutton id="clipple-toolbar-button"
+                       class="toolbarbutton-1"
+                       type="menu-button"
+                       label="Clipple"
+                       tooltiptext="Clipple"
+                       oncommand="if (event.target === this) clippleStatusbar.openStatusBarMenu(event);">
+          <menupopup id="clipple-menu" onpopupshowing="clippleStatusbar.onStatusBarMenuShowing(event);">
             <menuitem id="clipple-statusbar-menu-settings"
 	              label="&clipple.statusbar.settings;"
 	              accesskey="s"
@@ -30,9 +31,9 @@
                   accesskey="r"
                   class="menu-iconic"
                   image="chrome://clipple/skin/icon16/raise.png">
-                <menupopup id="clipple-statusbar-menu-raise-popup"
-                           onpopupshowing="clippleStatusbar.onRaiseMenuShowing(event);" >
-                </menupopup>
+              <menupopup id="clipple-statusbar-menu-raise-popup"
+                         onpopupshowing="clippleStatusbar.onRaiseMenuShowing(event);" >
+              </menupopup>
             </menu>
 
 	    <menu id="clipple-statusbar-menu-delete-menu"
@@ -40,18 +41,21 @@
                   accesskey="d"
                   class="menu-iconic"
                   image="chrome://clipple/skin/icon16/delete.png">
-                <menupopup id="clipple-statusbar-menu-delete-popup"
-                           onpopupshowing="clippleStatusbar.onDeleteMenuShowing(event);" >
-	            <menuitem id="clipple-statusbar-menu-delete-all"
-	                      label="&clipple.statusbar.deleteAll;"
-	                      accesskey="a"
-	                      oncommand="clippleStatusbar.removeAllItem(event);" />
-                    <menuseparator />
-                </menupopup>
+              <menupopup id="clipple-statusbar-menu-delete-popup"
+                         onpopupshowing="clippleStatusbar.onDeleteMenuShowing(event);" >
+	        <menuitem id="clipple-statusbar-menu-delete-all"
+	                  label="&clipple.statusbar.deleteAll;"
+	                  accesskey="a"
+	                  oncommand="clippleStatusbar.removeAllItem(event);" />
+                <menuseparator />
+              </menupopup>
             </menu>
 
-        </menupopup>
-    </statusbar>
+          </menupopup>
+
+        </toolbarbutton>
+
+    </toolbarpalette>
 
     <script type="application/x-javascript" src="chrome://clipple/content/statusbar.js"/>
 </overlay>
