@@ -174,7 +174,8 @@ let Clipple = (function () {
 
         // To prevent paste duplication (click -> command),
         // watch flags named `alreadyClicked`
-        let (alreadyClicked = false) {
+        let alreadyClicked = false;
+        {
             menu.addEventListener("command", function (ev) {
                 let { target } = ev;
 
@@ -205,7 +206,7 @@ let Clipple = (function () {
                 alreadyClicked = false;
                 aOnPopUp(ev);
             }, false);
-        };
+        }
 
         return menu;
     }
